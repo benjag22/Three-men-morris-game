@@ -17,6 +17,18 @@ public class Juego {
         this.gameWon = false;
     }
 
+    public Tablero getTab() {
+        return tab;
+    }
+
+    public Jugador getJugador1() {
+        return jugador1;
+    }
+
+    public Jugador getJugador2() {
+        return jugador2;
+    }
+
     public void iniciar() {
         Scanner scanner = new Scanner(System.in);
         Jugador currentPlayer = jugador1;
@@ -28,7 +40,6 @@ public class Juego {
             boolean success = currentPlayer.ponerFicha(tab, x, y);
             if (success) {
                 numTurnos++;
-                tab.display();  // Display the board after each move
                 if (tab.verificarVictoria(currentPlayer.getColor())) {
                     System.out.println("Jugador " + currentPlayer.getColor() + " ha ganado!");
                     gameWon = true;
@@ -48,7 +59,6 @@ public class Juego {
             int newY = scanner.nextInt();
             boolean success = currentPlayer.moverFicha(tab, x, y, newX, newY);
             if (success) {
-                tab.display();  // Display the board after each move
                 if (tab.verificarVictoria(currentPlayer.getColor())) {
                     System.out.println("Jugador " + currentPlayer.getColor() + " ha ganado!");
                     gameWon = true;

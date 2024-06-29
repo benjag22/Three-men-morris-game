@@ -76,13 +76,4 @@ public class Tablero {
         }
         return false;
     }
-
-    public void display() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                System.out.print("["+tablero[i][j].getColor() + "]");
-            }
-            System.out.println();
-        }
-    }
 }
