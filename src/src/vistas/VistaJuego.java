@@ -1,8 +1,7 @@
 package vistas;
 
-import logica.Juego;
-import logica.Tablero;
 import logica.Ficha;
+import logica.Juego;
 import logica.Jugador;
 
 import javax.swing.*;
@@ -10,7 +9,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class VistaJuego extends JFrame {
+public class VistaJuego extends JPanel {
     private Juego juego;
     private VistaTablero vistaTablero;
     private VistaJugador vistaJugador1;
@@ -20,8 +19,8 @@ public class VistaJuego extends JFrame {
     public VistaJuego() {
         this.juego = new Juego();
         this.vistaTablero = new VistaTablero(juego.getTab());
-        this.vistaJugador1 = new VistaJugador(juego.getJugador1().getColor());
-        this.vistaJugador2 = new VistaJugador(juego.getJugador2().getColor());
+        this.vistaJugador1 = new VistaJugador(juego.getJugador1());
+        this.vistaJugador2 = new VistaJugador(juego.getJugador2());
         this.currentPlayer = juego.getJugador1();
 
         setLayout(new BorderLayout());
@@ -29,11 +28,6 @@ public class VistaJuego extends JFrame {
         add(vistaTablero, BorderLayout.CENTER);
         add(vistaJugador1, BorderLayout.NORTH);
         add(vistaJugador2, BorderLayout.SOUTH);
-
-        setTitle("Three Men's Morris");
-        setSize(900, 900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
 
         addListeners();
     }
@@ -43,7 +37,7 @@ public class VistaJuego extends JFrame {
             for (int j = 0; j < 3; j++) {
                 final int x = i;
                 final int y = j;
-                vistaTablero.getVistaFicha(x, y).addMouseListener(new MouseAdapter() {
+                vistaTablero.getCelda(x, y).addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         handleCellClick(x, y);
@@ -54,18 +48,37 @@ public class VistaJuego extends JFrame {
     }
 
     private void handleCellClick(int x, int y) {
-        if (juego.getTab().verificarEspacio(x, y)) {
-            Ficha ficha = new Ficha(currentPlayer.getColor());
-            vistaTablero.ocuparPosicion(x, y, ficha);
-            if (juego.getTab().verificarVictoria(currentPlayer.getColor())) {
-                JOptionPane.showMessageDialog(this, "Jugador " + currentPlayer.getColor() + " ha ganado!");
-                return;
-            }
-            currentPlayer = (currentPlayer == juego.getJugador1()) ? juego.getJugador2() : juego.getJugador1();
+        Ficha ficha = new Ficha(currentPlayer.getColor());
+        boolean success = vistaJugador1.ponerFicha(vistaTablero, x, y); // Cambiar a vistaJugador1 o vistaJugador2 según corresponda
+        if (!success) {
+            JOptionPane.showMessageDialog(this, "Movimiento invalido en la posición (" + x + ", " + y + ").");
+            return;
         }
+
+        if (juego.getTab().verificarVictoria(currentPlayer.getColor())) {
+            JOptionPane.showMessageDialog(this, "Jugador " + currentPlayer.getColor() + " ha ganado!");
+            reiniciarJuego();
+            return;
+        }
+
+        currentPlayer = (currentPlayer == juego.getJugador1()) ? juego.getJugador2() : juego.getJugador1();
+    }
+
+
+    private void reiniciarJuego() {
+        juego = new Juego();
+        currentPlayer = juego.getJugador1();
+        repaint();
     }
 
     public static void main(String[] args) {
-        new VistaJuego();
+        JFrame frame = new JFrame("Three Men's Morris");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 600);
+
+        VistaJuego vistaJuego = new VistaJuego();
+        frame.add(vistaJuego);
+
+        frame.setVisible(true);
     }
 }

@@ -21,6 +21,10 @@ public class Juego {
         return tab;
     }
 
+    public int getNumTurnos() {
+        return numTurnos;
+    }
+
     public Jugador getJugador1() {
         return jugador1;
     }
